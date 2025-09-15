@@ -1,0 +1,137 @@
+{
+    "_type": "export",
+    "__export_format": 4,
+    "__export_date": "2025-09-15T15:00:00.000Z",
+    "__export_source": "chatgpt",
+    "resources": [
+      {
+        "_id": "wrk_1",
+        "created": 0,
+        "description": "Projeto API - AV2",
+        "modified": 0,
+        "name": "API AV2 - Marketplace",
+        "parentId": null,
+        "_type": "workspace"
+      },
+      {
+        "_id": "env_1",
+        "parentId": "wrk_1",
+        "_type": "environment",
+        "name": "Base Environment",
+        "data": {
+          "baseUrl": "http://localhost:3000"
+        }
+      },
+      {
+        "_id": "fld_users",
+        "parentId": "wrk_1",
+        "_type": "request_group",
+        "name": "Users"
+      },
+      {
+        "_id": "req_create_user",
+        "parentId": "fld_users",
+        "_type": "request",
+        "name": "POST /users",
+        "method": "POST",
+        "url": "{{ baseUrl }}/users",
+        "body": {
+          "mimeType": "application/json",
+          "text": "{\n  \"email\": \"user1@email.com\",\n  \"name\": \"User One\"\n}"
+        }
+      },
+      {
+        "_id": "fld_stores",
+        "parentId": "wrk_1",
+        "_type": "request_group",
+        "name": "Stores"
+      },
+      {
+        "_id": "req_create_store",
+        "parentId": "fld_stores",
+        "_type": "request",
+        "name": "POST /stores",
+        "method": "POST",
+        "url": "{{ baseUrl }}/stores",
+        "body": {
+          "mimeType": "application/json",
+          "text": "{\n  \"name\": \"Minha Loja\",\n  \"userId\": 1\n}"
+        }
+      },
+      {
+        "_id": "req_get_store",
+        "parentId": "fld_stores",
+        "_type": "request",
+        "name": "GET /stores/:id",
+        "method": "GET",
+        "url": "{{ baseUrl }}/stores/1"
+      },
+      {
+        "_id": "req_update_store",
+        "parentId": "fld_stores",
+        "_type": "request",
+        "name": "PUT /stores/:id",
+        "method": "PUT",
+        "url": "{{ baseUrl }}/stores/1",
+        "body": {
+          "mimeType": "application/json",
+          "text": "{\n  \"name\": \"Loja Atualizada\"\n}"
+        }
+      },
+      {
+        "_id": "req_delete_store",
+        "parentId": "fld_stores",
+        "_type": "request",
+        "name": "DELETE /stores/:id",
+        "method": "DELETE",
+        "url": "{{ baseUrl }}/stores/1"
+      },
+      {
+        "_id": "fld_products",
+        "parentId": "wrk_1",
+        "_type": "request_group",
+        "name": "Products"
+      },
+      {
+        "_id": "req_create_product",
+        "parentId": "fld_products",
+        "_type": "request",
+        "name": "POST /products",
+        "method": "POST",
+        "url": "{{ baseUrl }}/products",
+        "body": {
+          "mimeType": "application/json",
+          "text": "{\n  \"name\": \"Produto 1\",\n  \"price\": 19.90,\n  \"storeId\": 1\n}"
+        }
+      },
+      {
+        "_id": "req_get_products",
+        "parentId": "fld_products",
+        "_type": "request",
+        "name": "GET /products",
+        "method": "GET",
+        "url": "{{ baseUrl }}/products"
+      },
+      {
+        "_id": "req_update_product",
+        "parentId": "fld_products",
+        "_type": "request",
+        "name": "PUT /products/:id",
+        "method": "PUT",
+        "url": "{{ baseUrl }}/products/1",
+        "body": {
+          "mimeType": "application/json",
+          "text": "{\n  \"name\": \"Produto Atualizado\",\n  \"price\": 25.50\n}"
+        }
+      },
+      {
+        "_id": "req_delete_product",
+        "parentId": "fld_products",
+        "_type": "request",
+        "name": "DELETE /products/:id",
+        "method": "DELETE",
+        "url": "{{ baseUrl }}/products/1"
+      }
+    ]
+  }
+  
