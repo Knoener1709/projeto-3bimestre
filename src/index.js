@@ -7,7 +7,7 @@ const prisma = new PrismaClient()
 app.use(express.json())
 
 // --------------------- USERS ---------------------
-// (Opcional: apenas se quiser CRUD de users também)
+// POST - criar User
 app.post('/users', async (req, res) => {
   try {
     const { email, name } = req.body
