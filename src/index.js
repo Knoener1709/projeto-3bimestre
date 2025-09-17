@@ -6,6 +6,7 @@ const prisma = new PrismaClient()
 
 app.use(express.json())
 
+
 // --------------------- USERS ---------------------
 // POST - criar User
 app.post('/users', async (req, res) => {
