@@ -6,8 +6,8 @@ const prisma = new PrismaClient()
 
 app.use(express.json())
 
-
 // --------------------- USERS ---------------------
+
 // POST - criar User
 app.post('/users', async (req, res) => {
   try {
@@ -21,7 +21,60 @@ app.post('/users', async (req, res) => {
   }
 })
 
+// GET - listar todos os Users
+app.get('/users', async (req, res) => {
+  try {
+    const users = await prisma.user.findMany({
+      include: { store: true }
+    })
+    res.json(users)
+  } catch (e) {
+    res.status(400).json({ error: e.message })
+  }
+})
+
+// GET - buscar User por id
+app.get('/users/:id', async (req, res) => {
+  try {
+    const user = await prisma.user.findUnique({
+      where: { id: Number(req.params.id) },
+      include: { store: true }
+    })
+    if (!user) return res.status(404).json({ error: 'Usuário não encontrado' })
+    res.json(user)
+  } catch (e) {
+    res.status(400).json({ error: e.message })
+  }
+})
+
+// PUT - atualizar User
+app.put('/users/:id', async (req, res) => {
+  try {
+    const { email, name } = req.body
+    const user = await prisma.user.update({
+      where: { id: Number(req.params.id) },
+      data: { email, name }
+    })
+    res.json(user)
+  } catch (e) {
+    res.status(400).json({ error: e.message })
+  }
+})
+
+// DELETE - remover User
+app.delete('/users/:id', async (req, res) => {
+  try {
+    await prisma.user.delete({
+      where: { id: Number(req.params.id) }
+    })
+    res.json({ message: 'Usuário removido com sucesso' })
+  } catch (e) {
+    res.status(400).json({ error: e.message })
+  }
+})
+
 // --------------------- STORES ---------------------
+
 // POST - criar Store vinculada a um User
 app.post('/stores', async (req, res) => {
   try {
@@ -76,6 +129,7 @@ app.delete('/stores/:id', async (req, res) => {
 })
 
 // --------------------- PRODUCTS ---------------------
+
 // POST - criar Product
 app.post('/products', async (req, res) => {
   try {
