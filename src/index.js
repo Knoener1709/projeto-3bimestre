@@ -105,16 +105,19 @@ app.get('/stores/:id', async (req, res) => {
 // PUT - atualizar Store
 app.put('/stores/:id', async (req, res) => {
   try {
-    const { name } = req.body
+    const data = {}
+    if (req.body.name) data.name = req.body.name
+
     const store = await prisma.store.update({
       where: { id: Number(req.params.id) },
-      data: { name }
+      data
     })
     res.json(store)
   } catch (e) {
     res.status(400).json({ error: e.message })
   }
 })
+
 
 // DELETE - remover Store
 app.delete('/stores/:id', async (req, res) => {
