@@ -1,3 +1,4 @@
+import 'dotenv/config'   // ✅ garante que o .env é carregado
 import express from 'express'
 import { PrismaClient } from '@prisma/client'
 
@@ -11,13 +12,16 @@ app.use(express.json())
 // POST - criar User
 app.post('/users', async (req, res) => {
   try {
-    const { email, name } = req.body
+    if (!req.body || !req.body.email || !req.body.name) {
+      return res.status(400).json({ error: 'Corpo da requisição ou campos obrigatórios não enviados' });
+    }
+    const { email, name } = req.body;
     const user = await prisma.user.create({
       data: { email, name }
-    })
-    res.status(201).json(user)
+    });
+    res.status(201).json(user);
   } catch (e) {
-    res.status(400).json({ error: e.message })
+    res.status(400).json({ error: e.message });
   }
 })
 
@@ -47,17 +51,23 @@ app.get('/users/:id', async (req, res) => {
   }
 })
 
-// PUT - atualizar User
+// PUT - atualizar User (campos opcionais)
 app.put('/users/:id', async (req, res) => {
   try {
-    const { email, name } = req.body
+    if (!req.body) {
+      return res.status(400).json({ error: 'Corpo da requisição não enviado' });
+    }
+    const data = {};
+    if (req.body.email) data.email = req.body.email;
+    if (req.body.name) data.name = req.body.name;
+
     const user = await prisma.user.update({
       where: { id: Number(req.params.id) },
-      data: { email, name }
-    })
-    res.json(user)
+      data
+    });
+    res.json(user);
   } catch (e) {
-    res.status(400).json({ error: e.message })
+    res.status(400).json({ error: e.message });
   }
 })
 
@@ -78,13 +88,16 @@ app.delete('/users/:id', async (req, res) => {
 // POST - criar Store vinculada a um User
 app.post('/stores', async (req, res) => {
   try {
-    const { name, userId } = req.body
+    if (!req.body || !req.body.name || !req.body.userId) {
+      return res.status(400).json({ error: 'Corpo da requisição ou campos obrigatórios não enviados' });
+    }
+    const { name, userId } = req.body;
     const store = await prisma.store.create({
       data: { name, userId: Number(userId) }
-    })
-    res.status(201).json(store)
+    });
+    res.status(201).json(store);
   } catch (e) {
-    res.status(400).json({ error: e.message })
+    res.status(400).json({ error: e.message });
   }
 })
 
@@ -102,22 +115,25 @@ app.get('/stores/:id', async (req, res) => {
   }
 })
 
-// PUT - atualizar Store
+
+// PUT - atualizar Store (campos opcionais)
 app.put('/stores/:id', async (req, res) => {
   try {
-    const data = {}
-    if (req.body.name) data.name = req.body.name
+    if (!req.body) {
+      return res.status(400).json({ error: 'Corpo da requisição não enviado' });
+    }
+    const data = {};
+    if (req.body.name) data.name = req.body.name;
 
     const store = await prisma.store.update({
       where: { id: Number(req.params.id) },
       data
-    })
-    res.json(store)
+    });
+    res.json(store);
   } catch (e) {
-    res.status(400).json({ error: e.message })
+    res.status(400).json({ error: e.message });
   }
-})
-
+});
 
 // DELETE - remover Store
 app.delete('/stores/:id', async (req, res) => {
@@ -136,13 +152,20 @@ app.delete('/stores/:id', async (req, res) => {
 // POST - criar Product
 app.post('/products', async (req, res) => {
   try {
-    const { name, price, storeId } = req.body
+    if (!req.body || !req.body.name || !req.body.price || !req.body.storeId) {
+      return res.status(400).json({ error: 'Corpo da requisição ou campos obrigatórios não enviados' });
+    }
+    const { name, price, storeId } = req.body;
     const product = await prisma.product.create({
-      data: { name, price: Number(price), storeId: Number(storeId) }
-    })
-    res.status(201).json(product)
+      data: { 
+        name, 
+        price: Number(price), 
+        storeId: Number(storeId) 
+      }
+    });
+    res.status(201).json(product);
   } catch (e) {
-    res.status(400).json({ error: e.message })
+    res.status(400).json({ error: e.message });
   }
 })
 
@@ -161,25 +184,35 @@ app.get('/products', async (req, res) => {
 // PUT - atualizar Product
 app.put('/products/:id', async (req, res) => {
   try {
-    const { name, price } = req.body
+    if (!req.body) {
+      return res.status(400).json({ error: 'Corpo da requisição não enviado' });
+    }
+    const data = {};
+    if (req.body.name) data.name = req.body.name;
+    if (req.body.price) data.price = Number(req.body.price);
+
     const product = await prisma.product.update({
       where: { id: Number(req.params.id) },
-      data: { name, price: Number(price) }
-    })
-    res.json(product)
+      data
+    });
+    res.json(product);
   } catch (e) {
-    res.status(400).json({ error: e.message })
+    res.status(400).json({ error: e.message });
   }
 })
 
 // DELETE - remover Product
 app.delete('/products/:id', async (req, res) => {
   try {
-    await prisma.product.delete({
+    const product = await prisma.product.delete({
       where: { id: Number(req.params.id) }
     })
-    res.json({ message: 'Produto removido com sucesso' })
+    res.json({ message: 'Produto removido com sucesso', product })
   } catch (e) {
+    if (e.code === 'P2025') {
+      // Prisma lança P2025 quando não encontra registro
+      return res.status(404).json({ error: 'Produto não encontrado' })
+    }
     res.status(400).json({ error: e.message })
   }
 })
